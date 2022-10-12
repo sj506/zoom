@@ -27,10 +27,16 @@ const handleListen = () => console.log(`Listening on http:localhost:3000`);
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
+const sockets = [];
+//fake database
+
 wss.on('connection', (socket) => {
+  sockets.push(socket);
   console.log('Connected to Browser');
-  socket.send('hello!!!');
+  socket.on('close', () => console.log('Disconneted from the Browser ❌'));
+  socket.on('message', (message) => {
+    sockets.forEach((aSocket) => aSocket.send(message.toString('utf8')));
+  });
 });
-// wss가 연결될 때 이벤트 발생
 
 server.listen(3000, handleListen);

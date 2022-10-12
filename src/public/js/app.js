@@ -1,3 +1,5 @@
+const msgList = document.querySelector('ul');
+const msgForm = document.querySelector('form');
 const socket = new WebSocket(`ws://${window.location.host}`);
 
 socket.addEventListener('open', () => {
@@ -5,9 +7,29 @@ socket.addEventListener('open', () => {
 });
 
 socket.addEventListener('message', (message) => {
-  console.log('Just got this: ', message.data, 'from the Server');
+  const li = document.createElement('li');
+  li.innerText = message.data;
+  msgList.append(li);
 });
 
 socket.addEventListener('close', () => {
-  console.log('Conneted from Server ❌');
+  console.log('Disconneted from Server ❌');
 });
+
+function handleListen(event) {
+  event.preventDefault();
+  const nicknmInput = msgForm.querySelector('#nickname');
+  const msgInput = msgForm.querySelector('#msg');
+  socket.send({
+    type: 'nickname',
+    payload: nicknmInput.value,
+  });
+  socket.send({
+    type: 'message',
+    payload: msgInput.value,
+  });
+
+  msgInput.value = '';
+}
+
+msgForm.addEventListener('submit', handleListen);
