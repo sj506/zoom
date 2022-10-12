@@ -2,15 +2,16 @@ const msgList = document.querySelector('ul');
 const msgForm = document.querySelector('form');
 const socket = new WebSocket(`ws://${window.location.host}`);
 
+function makeMsg(type, payload) {
+  const msg = { type, payload };
+  return JSON.stringify(msg);
+}
+
 socket.addEventListener('open', () => {
   console.log('Connected to Server ✔');
 });
 
-socket.addEventListener('message', (message) => {
-  const li = document.createElement('li');
-  li.innerText = message.data;
-  msgList.append(li);
-});
+socket.addEventListener('message', makeMsg);
 
 socket.addEventListener('close', () => {
   console.log('Disconneted from Server ❌');
